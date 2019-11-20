@@ -1,0 +1,46 @@
+.masthead {
+    height: 22vh;
+    background-image: url('/static/images/header.jpg');
+    background-color: #000000;
+    background-size: cover;
+    background-position: 50% 62%;
+    background-repeat: no-repeat;
+    overflow: hidden;
+}
+
+.vertical-center {
+    display: flex;
+    align-items: center;
+}
+
+.logo-col {
+    max-width: 100px;
+}
+
+.custom-green {
+    color: #31a952;
+}
+
+.custom-purple {
+    color: #6600cc;
+}
+
+.custom-black {
+    color: #000000;
+}
+
+.custom-twitter-blue {
+    color: #1da1f2;
+}
+
+.custom-reddit-orange {
+    color: #ff4301;
+}
+
+.get-apps {
+    height: 5vh;
+}
+
+.custom-shadow {
+	text-shadow: 2px 2px 4px #000000;
+}
