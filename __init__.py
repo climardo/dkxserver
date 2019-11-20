@@ -1,5 +1,5 @@
 import os
-from flask import Flask, flash, render_template, request, redirect, url_for
+from flask import Flask, flash, render_template, request, redirect, session, url_for
 from werkzeug.utils import secure_filename
 
 def create_app(test_config=None):
@@ -20,16 +20,11 @@ def create_app(test_config=None):
 
     ALLOWED_EXTENSIONS = {'csv'}
 
-    # a simple page that says hello
-    @app.route('/')
-    def index():
-        return render_template('index.html')
-
     def allowed_file(filename):
         return '.' in filename and \
             filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-    @app.route('/upload', methods=['GET', 'POST'])
+    @app.route('/', methods=['GET', 'POST'])
     def upload_file():
         if request.method == 'POST':
             # check if the post request has the file part
@@ -45,8 +40,9 @@ def create_app(test_config=None):
             if uploaded_file and allowed_file(uploaded_file.filename):
                 csv_file = uploaded_file.stream.read()
                 if csv_file:
-                    return 'Success!'
-                return redirect(url_for('upload_file', uploaded_file=csv_file))
-        return render_template('upload.html')
+                    return render_template('index.html', uploaded_file=csv_file)
+                else:
+                    return redirect(request.url)
+        return render_template('index.html')
 
     return app

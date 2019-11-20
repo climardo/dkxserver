@@ -1,5 +1,17 @@
 {% extends "base.html" %}
 
 {% block content %}
-<p>This is a test</p>
+<div class="custom-file">
+    <form method=post enctype=multipart/form-data>
+        <input type="file" class="custom-file-input" name="file" id="file-browser">
+        <label class="custom-file-label" for="customFile" id="file-label">Choose file</label>
+        <button name="update" type="submit" class="btn btn-dark mt-1">Upload</button>
+    </form>
+</div>
+{% if not uploaded_file %}
+    Please upload a file
+{% else %}
+    value of variable: {{ uploaded_file }}
+{% endif %}
+
 {% endblock %}
