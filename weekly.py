@@ -1,5 +1,6 @@
 import json, re, requests, sys
 from datetime import datetime
+from tempfile import SpooledTemporaryFile
 
 today = datetime.now().strftime('%Y-%m-%d')
 def get_curr_week():
@@ -8,11 +9,6 @@ def get_curr_week():
     r = requests.get(url=dk_weeks)
     curr_week = r.json()['week']
     return curr_week
-
-# Capture user input to assign values to variables
-week = 'user_input'
-contest_id = 'user_input'
-results_file = 'user_input'
 
 def get_bye_teams(week=None):
     if week == None:
@@ -192,24 +188,25 @@ def create_results(users, output_file):
     except:
         return 1
 
-def create_blogpost(template, output_file, values=None):
+def create_blogpost(results_file, template="/static/weekly-template.md", values=None):
     if values == None:
         values = {
-            'bust_draft': draft_string(get_drafted()['bust_draft']),
+            'bust_draft': draft_string(get_drafted(results_file)['bust_draft']),
             'bust': dk_data()['bust'],
-            'bye_teams': get_bye_teams(),
+            'bye_teams': get_bye_teams(results_file),
             'contest_id': contest_id,
-            'draft_dodger': get_drafted()['draft_dodger'],
+            'draft_dodger': get_drafted(results_file)['draft_dodger'],
             'mvp_draft': draft_string(get_drafted()['mvp_draft']),
             'mvp': dk_data()['mvp'],
-            'sleeper_draft': get_drafted()['sleeper_draft'],
+            'sleeper_draft': get_drafted(results_file)['sleeper_draft'],
             'sleeper': dk_data()['sleeper'],
             'week': get_curr_week()
         }
+        filename = today + '-week-' + values['week']+ '-results.md'
     try:
         # Replace placeholders in weekly-template with values listed below
         with open(template, 'r') as weekly_template:
-            with open(output_file, 'w+') as weekly_output:
+            with SpooledTemporaryFile() as weekly_output:
                 template_str = weekly_template.read()
                 weekly_output.write(template_str.format(
                     bust_draft=draft_string(values['bust_draft']), 
@@ -221,8 +218,8 @@ def create_blogpost(template, output_file, values=None):
                     mvp_png=png_name(values['mvp']),
                     sleeper_draft=draft_string(values['sleeper_draft']),
                     sleeper_png=png_name(values['sleeper']),
-                    week=week)
+                    week=values['week'])
                 )
-        return 0
+                return weekly_output
     except:
         return 1
