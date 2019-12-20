@@ -6,15 +6,14 @@
         {% for category, message in messages %}
 
 <div class="alert alert-{{ category }}" role="alert">
-    <ul class="list-unstyled">
-        <li>{{ message }}</li>
-    </ul>
+    {{ message }}
 </div>
         {% endfor %}
     {% endif %}
 {% endwith %}
 
 {% if not uploaded_file and not data_submitted %}
+
 <form method="post" enctype="multipart/form-data">
     <div class="custom-file">
         <input type="file" class="custom-file-input" name="file" id="file-browser">
@@ -22,7 +21,9 @@
     </div>
     <button name="update" type="submit" class="btn btn-dark mt-1">Upload</button>
 </form>
+
 {% elif not data_submitted %}
+
 <form method="post" enctype="multipart/form-data">
     <div class="form-group">
         <label for="week">Week</label>
@@ -40,5 +41,10 @@
     </div>
     <button name="update" type="submit" class="btn btn-dark mt-1">Submit</button>
 </form>
+
+{% else %}
+
+<h2>Let's process this data</h2>
+
 {% endif %}
 {% endblock %}
