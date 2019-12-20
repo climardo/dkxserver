@@ -1,5 +1,7 @@
 import os, re
 from flask import Flask, flash, render_template, request, redirect, session, url_for
+from flask_wtf import FlaskForm
+from flask_wtf.file import FileField, FileRequired
 from werkzeug.utils import secure_filename
 
 def create_app(test_config=None):
@@ -23,6 +25,23 @@ def create_app(test_config=None):
     def allowed_file(filename):
         return '.' in filename and \
             filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+    
+    
+    class PhotoForm(FlaskForm):
+        photo = FileField(validators=[FileRequired()])
+
+    @app.route('/upload', methods=['GET', 'POST'])
+    def upload():
+        if form.validate_on_submit():
+            f = form.photo.data
+            filename = secure_filename(f.filename)
+            f.save(os.path.join(
+                app.instance_path, 'photos', filename
+            ))
+            return redirect(url_for('index'))
+
+        return render_template('upload.html', form=form)
+
 
     @app.route('/', methods=['GET', 'POST'])
     def upload_file():

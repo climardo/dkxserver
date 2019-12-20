@@ -16,20 +16,23 @@ def get_bye_teams(week=None):
 
     # Get list of bye_teams by downloading and parsing data from Yahoo Sports
     # Create URL string including week argument
-    get_game_data = 'https://api-secure.sports.yahoo.com/v1/editorial/s/scoreboard?leagues=nfl&week={}&season=current'.format(week)
+    get_game_data = 'https://api-secure.sports.yahoo.com/v1/editorial/s/scoreboard?leagues=nfl&week={}&season=current'.format(str(int(week) + 1))
     r = requests.get(url=get_game_data) # GET URL
     game_data = r.json()['service']['scoreboard'] # All relevant data is contained within service/scoreboard/*
-    bye_teams_raw = set(game_data['bye_teams']) # Bye teams are listed as team id numbers
 
     # Search through list of teams, if the id number matches one in bye_teams_raw, then add to list bye_teams
-    bye_teams = [] 
-    for team in game_data['teams']:
-        if team in bye_teams_raw:
-            bye_teams.append(game_data['teams'][team]['display_name'])
+    if 'bye_teams' in game_data.keys():
+        bye_teams_raw = set(game_data['bye_teams']) # Bye teams are listed as team id numbers
+        bye_teams = [] 
+        for team in game_data['teams']:
+            if team in bye_teams_raw:
+                bye_teams.append(game_data['teams'][team]['display_name'])
+        
+        # Create a string with list items separated by commas
+        bye_teams_str = ', '.join(bye_teams)
+    else:
+        bye_teams = "None"
     
-    # Create a string with list items separated by commas
-    bye_teams_str = ', '.join(bye_teams)
-
     return bye_teams_str # Return string
 
 def dk_data(week=None):
