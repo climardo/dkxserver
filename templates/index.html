@@ -3,7 +3,7 @@
 {% block content %}
 {% with messages = get_flashed_messages() %}
     {% if messages %}
-<div class="alert alert-light" role="alert">
+<div class="alert alert-{{messages[0][category]}}" role="alert">
     <ul class="list-unstyled">
         {% for message in messages %}
         <li>{{ message }}</li>

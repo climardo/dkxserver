@@ -30,7 +30,7 @@ def create_app(test_config=None):
             # check if the post request has the file part
             if 'file' not in request.files:
                 #blogpost = weekly.create_blogpost(session['csv_file'])
-                flash(f"week: {request.form['week']}")
+                flash(f"week: {request.form['week']}", category='light')
                 return render_template('index.html', data_submitted=True)
             uploaded_file = request.files['file']
             # if user does not select file, browser also
@@ -39,18 +39,16 @@ def create_app(test_config=None):
                 flash('Please select a file to be uploaded.')
                 return redirect(request.url)
             if uploaded_file and allowed_file(uploaded_file.filename):
-                session['csv_file'] = csv_file = uploaded_file.stream.read()
-                if csv_file:
-                    flash(f'{uploaded_file.filename} was uploaded successfully.')
-                    return render_template('index.html', 
-                        uploaded_file=csv_file,
-                        week=weekly.get_curr_week(),
-                        results_file=uploaded_file.filename,
-                        contest_id=re.split('-|\.',uploaded_file.filename)[2]
-                    )
-                else:
-                    flash(f'Invalid file type. Please upload CSV files only.')
-                    return redirect(request.url)
+                flash(f'{uploaded_file.filename} was uploaded successfully.', category='success')
+                return render_template('index.html', 
+                    uploaded_file=uploaded_file,
+                    week=weekly.get_curr_week(),
+                    results_file=uploaded_file.filename,
+                    contest_id=re.split('-|\.',uploaded_file.filename)[2]
+                )
+            else:
+                flash(f'Invalid file type. Please upload CSV files only.', category='danger')
+                return redirect(request.url)
         return render_template('index.html')
 
     return app
