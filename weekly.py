@@ -86,6 +86,13 @@ def dk_data(week=None):
             
         player.update({"fullName": '{} {}'.format(player['firstName'], player['lastName'])})
 
+    return players
+
+def superlatives(week=None):
+    if week == None:
+        week = get_curr_week()
+
+    players = dk_data(week)
     # Create a list (bust_players) of dicts where salary is greater than or equal to 5000
     bust_players = [x for x in players if x.get('salary') >= 5000]
 
@@ -104,7 +111,10 @@ def dk_data(week=None):
 
     return superlatives
 
-def get_drafted(results_file, week):
+def get_drafted(results_file, week=None):
+    if week == None:
+        week = get_curr_week()
+    
     mvp_draft, sleeper_draft, bust_draft, users, drafted = [], [], [], [], set()
     players = dk_data(week)
 
@@ -120,11 +130,11 @@ def get_drafted(results_file, week):
                 users.append("{} - {} fpts".format(user_name, user_pts))
 
             # Add list of users whose teams contain a player to the specified lists
-            if lines[0] and players['mvp'] in lines[5]:
+            if lines[0] and superlatives(week)['mvp'] in lines[5]:
                 mvp_draft.append(lines[2])
-            if lines[0] and players['sleeper'] in lines[5]:
+            if lines[0] and superlatives(week)['sleeper'] in lines[5]:
                 sleeper_draft.append(lines[2])
-            if lines[0] and players['bust'] in lines[5]:
+            if lines[0] and superlatives(week)['bust'] in lines[5]:
                 bust_draft.append(lines[2])
             
             # Add drafted players to drafted set
@@ -170,7 +180,10 @@ def draft_string(my_list):
     else:
         return '<span class="font-weight-bold">Undrafted</span>'
 
-def png_name(player):
+def png_name(player, week=None):
+    if week == None:
+        week = get_curr_week()
+
     # Function used to create a string (filename) used to rename player screenshots
     filename = 'week-' + week + '-'
     filename += '-'.join(player.split())
@@ -197,14 +210,14 @@ def create_blogpost(results_file, template="/static/weekly-template.md", values=
         week = week
         values = {
             'bust_draft': draft_string(get_drafted(results_file, week)['bust_draft']),
-            'bust': dk_data(week)['bust'],
+            'bust': superlatives(week)['bust'],
             'bye_teams': get_bye_teams(results_file),
             'contest_id': contest_id,
             'draft_dodger': get_drafted(results_file, week)['draft_dodger'],
             'mvp_draft': draft_string(get_drafted(results_file, week)['mvp_draft']),
-            'mvp': dk_data(week)['mvp'],
+            'mvp': superlatives(week)['mvp'],
             'sleeper_draft': get_drafted(results_file, week)['sleeper_draft'],
-            'sleeper': dk_data(week)['sleeper'],
+            'sleeper': superlatives(week)['sleeper'],
             'week': get_curr_week()
         }
         filename = today + '-week-' + values['week']+ '-results.md'
@@ -215,7 +228,7 @@ def create_blogpost(results_file, template="/static/weekly-template.md", values=
                 template_str = weekly_template.read()
                 weekly_output.write(template_str.format(
                     bust_draft=draft_string(values['bust_draft']), 
-                    bust_png=png_name(values['bust']),
+                    bust_png=png_name(values['bust'], week),
                     bye_teams=values['bye_teams'],
                     contest_id=values['contest_id'],
                     draft_dodger_png=png_name(values['draft_dodger']),
