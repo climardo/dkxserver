@@ -1,12 +1,16 @@
-import os, re
+import os, re, tempfile
 from flask import Flask, flash, render_template, request, redirect, session, url_for
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileRequired
 from werkzeug.utils import secure_filename
 
+UPLOAD_FOLDER = tempfile.gettempdir()
+ALLOWED_EXTENSIONS = {'csv'}
+
 def create_app(test_config=None):
     # create and configure the app
     app = Flask(__name__, instance_relative_config=True)
+    app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
     app.config.from_mapping(
         SECRET_KEY='UD1KbD__RZujhpV2p6r9MQ',
     )
@@ -19,8 +23,6 @@ def create_app(test_config=None):
         app.config.from_mapping(test_config)
     
     from . import weekly
-
-    ALLOWED_EXTENSIONS = {'csv'}
 
     def allowed_file(filename):
         return '.' in filename and \
@@ -49,7 +51,7 @@ def create_app(test_config=None):
         if request.method == 'POST':
             # check if the post request has the file part
             if 'file' not in request.files:
-                #blogpost = weekly.create_blogpost(session['csv_file'])
+                blogpost = weekly.create_blogpost(f"{app.config['UPLOAD_FOLDER']}/{session['filename']}", week=request.form['week'], contest_id=request.form['contest_id'])
                 flash(f"week: {request.form['week']}", category='info')
                 return render_template('index.html', data_submitted=True)
             uploaded_file = request.files['file']
@@ -60,11 +62,12 @@ def create_app(test_config=None):
                 return redirect(request.url)
             if uploaded_file and allowed_file(uploaded_file.filename):
                 flash(f'{uploaded_file.filename} was uploaded successfully.', category='success')
+                session['filename'] = secure_filename(uploaded_file.filename)
+                uploaded_file.save(os.path.join(app.config['UPLOAD_FOLDER'], session['filename']))
                 return render_template('index.html', 
-                    uploaded_file=uploaded_file,
                     week=weekly.get_curr_week(),
-                    results_file=uploaded_file.filename,
-                    contest_id=re.split('-|\.', uploaded_file.filename)[2]
+                    results_file=session['filename'],
+                    contest_id=re.split('-|\.', session['filename'])[2]
                 )
             else:
                 flash(f'Invalid file type. Please upload CSV files only.', category='danger')

@@ -104,9 +104,9 @@ def dk_data(week=None):
 
     return superlatives
 
-def get_drafted(results_file):
+def get_drafted(results_file, week):
     mvp_draft, sleeper_draft, bust_draft, users, drafted = [], [], [], [], set()
-    players = dk_data()
+    players = dk_data(week)
 
     with open(results_file) as csv_file:
         # Use only the first 6 fields of csv_file to create a list (lines)
@@ -191,18 +191,20 @@ def create_results(users, output_file):
     except:
         return 1
 
-def create_blogpost(results_file, template="/static/weekly-template.md", values=None):
+def create_blogpost(results_file, template="/static/weekly-template.md", values=None, contest_id=None, week=None):
     if values == None:
+        contest_id = contest_id
+        week = week
         values = {
-            'bust_draft': draft_string(get_drafted(results_file)['bust_draft']),
-            'bust': dk_data()['bust'],
+            'bust_draft': draft_string(get_drafted(results_file, week)['bust_draft']),
+            'bust': dk_data(week)['bust'],
             'bye_teams': get_bye_teams(results_file),
             'contest_id': contest_id,
-            'draft_dodger': get_drafted(results_file)['draft_dodger'],
-            'mvp_draft': draft_string(get_drafted()['mvp_draft']),
-            'mvp': dk_data()['mvp'],
-            'sleeper_draft': get_drafted(results_file)['sleeper_draft'],
-            'sleeper': dk_data()['sleeper'],
+            'draft_dodger': get_drafted(results_file, week)['draft_dodger'],
+            'mvp_draft': draft_string(get_drafted(results_file, week)['mvp_draft']),
+            'mvp': dk_data(week)['mvp'],
+            'sleeper_draft': get_drafted(results_file, week)['sleeper_draft'],
+            'sleeper': dk_data(week)['sleeper'],
             'week': get_curr_week()
         }
         filename = today + '-week-' + values['week']+ '-results.md'
