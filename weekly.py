@@ -31,7 +31,7 @@ def get_bye_teams(week=None):
         # Create a string with list items separated by commas
         bye_teams_str = ', '.join(bye_teams)
     else:
-        bye_teams = "None"
+        bye_teams_str = "None"
     
     return bye_teams_str # Return string
 
@@ -208,17 +208,19 @@ def create_blogpost(results_file, template="/static/weekly-template.md", values=
     if values == None:
         contest_id = contest_id
         week = week
+        drafted = get_drafted(results_file, week)
+        best = superlatives(week)
         values = {
-            'bust_draft': draft_string(get_drafted(results_file, week)['bust_draft']),
-            'bust': superlatives(week)['bust'],
-            'bye_teams': get_bye_teams(results_file),
+            'bust_draft': draft_string(drafted['bust_draft']),
+            'bust': best['bust'],
+            'bye_teams': get_bye_teams(week),
             'contest_id': contest_id,
-            'draft_dodger': get_drafted(results_file, week)['draft_dodger'],
-            'mvp_draft': draft_string(get_drafted(results_file, week)['mvp_draft']),
-            'mvp': superlatives(week)['mvp'],
-            'sleeper_draft': get_drafted(results_file, week)['sleeper_draft'],
-            'sleeper': superlatives(week)['sleeper'],
-            'week': get_curr_week()
+            'draft_dodger': drafted['draft_dodger'],
+            'mvp_draft': draft_string(drafted['mvp_draft']),
+            'mvp': best['mvp'],
+            'sleeper_draft': drafted['sleeper_draft'],
+            'sleeper': best['sleeper'],
+            'week': week
         }
         filename = today + '-week-' + values['week']+ '-results.md'
     try:
