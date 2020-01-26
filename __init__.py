@@ -51,7 +51,7 @@ def create_app(test_config=None):
         if request.method == 'POST':
             # check if the post request has the file part
             if 'file' not in request.files:
-                blogpost = weekly.create_blogpost(f"{app.config['UPLOAD_FOLDER']}/{session['filename']}", week=request.form['week'], contest_id=request.form['contest_id'])
+                blogpost = weekly.create_blogpost(f"{app.config['UPLOAD_FOLDER']}/{session['filename']}", week=request.form['week'], contest_id=request.form['contest_id'], outdir=f"{app.config['UPLOAD_FOLDER']}")
                 flash(f"week: {request.form['week']}", category='info')
                 return render_template('index.html', data_submitted=True)
             uploaded_file = request.files['file']

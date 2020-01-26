@@ -204,7 +204,7 @@ def create_results(users, output_file):
     except:
         return 1
 
-def create_blogpost(results_file, template="/static/weekly-template.md", values=None, contest_id=None, week=None):
+def create_blogpost(results_file, template="/static/weekly-template.md", values=None, contest_id=None, week=None, outdir="/temp/"):
     if values == None:
         contest_id = contest_id
         week = week
@@ -226,7 +226,7 @@ def create_blogpost(results_file, template="/static/weekly-template.md", values=
     try:
         # Replace placeholders in weekly-template with values listed below
         with open(template, 'r') as weekly_template:
-            with SpooledTemporaryFile() as weekly_output:
+            with f"{outdir}/" as weekly_output:
                 template_str = weekly_template.read()
                 weekly_output.write(template_str.format(
                     bust_draft=draft_string(values['bust_draft']), 
