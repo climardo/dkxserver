@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        {% for category, message in messages %}
+
+<div class="alert alert-{{ category }}" role="alert">
+    {{ message }}
+</div>
+        {% endfor %}
+    {% endif %}
+{% endwith %}
+
+<p>{{ not_submitted }}</p>
+<form method="post" enctype="multipart/form-data">
+    <div class="custom-file">
+        <input type="file" class="custom-file-input" name="file" id="file-browser">
+        <label class="custom-file-label" for="file-browser" id="file-label">Choose file</label>
+    </div>
+    <button name="update" type="submit" class="btn btn-dark mt-1">Upload</button>
+</form>
+
+
+<form method="post" enctype="multipart/form-data">
+    <div class="form-group">
+        <label for="week">Week</label>
+        <input type="text" class="form-control" name="week" id="week" value="{{ week }}">
+    </div>
+    <div class="form-group">
+        <label for="results_file">File</label>
+        <input type="text" class="form-control" name="results_file" id="results_file" value="{{ results_file }}">
+    </div>
+    <div class="form-group">
+        <label for="contest_id">Contest Id</label>
+        <input type="text" class="form-control" name="contest_id" id="contest_id" value="{{ contest_id }}">
+    </div>
+    <div class="form-grou d-none">
+    </div>
+    <button name="update" type="submit" class="btn btn-dark mt-1">Submit</button>
+</form>
+
+{% endblock %}

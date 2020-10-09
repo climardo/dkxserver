@@ -10,6 +10,8 @@ flask = "*"
 werkzeug = "*"
 requests = "*"
 flask-wtf = "*"
+python-dotenv = "*"
+dkextract = "*"
 
 [requires]
 python_version = "3.7"
