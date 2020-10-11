@@ -12,32 +12,23 @@
     {% endif %}
 {% endwith %}
 
-<p>{{ not_submitted }}</p>
-<form method="post" enctype="multipart/form-data">
-    <div class="custom-file">
-        <input type="file" class="custom-file-input" name="file" id="file-browser">
-        <label class="custom-file-label" for="file-browser" id="file-label">Choose file</label>
-    </div>
-    <button name="update" type="submit" class="btn btn-dark mt-1">Upload</button>
-</form>
-
-
 <form method="post" enctype="multipart/form-data">
     <div class="form-group">
-        <label for="week">Week</label>
+        <label for="week">Contest Id</label>
+        <input type="text" class="form-control" name="contest_id" id="contest_id" value="{{ contest_id }}">
+    </div>
+    <div class="form-group">
+        <label for="results_file">Week</label>
         <input type="text" class="form-control" name="week" id="week" value="{{ week }}">
     </div>
     <div class="form-group">
-        <label for="results_file">File</label>
-        <input type="text" class="form-control" name="results_file" id="results_file" value="{{ results_file }}">
-    </div>
-    <div class="form-group">
-        <label for="contest_id">Contest Id</label>
-        <input type="text" class="form-control" name="contest_id" id="contest_id" value="{{ contest_id }}">
+        <label for="contest_id">Year</label>
+        <input type="text" class="form-control" name="year" id="year" value="{{ year }}">
     </div>
     <div class="form-grou d-none">
     </div>
-    <button name="update" type="submit" class="btn btn-dark mt-1">Submit</button>
+    <button name="get_not_submitted" value="get_not_submitted" type="submit" class="btn btn-dark mt-1">Not submitted?</button>
+    <button name="generate" value="generate" type="submit" class="btn btn-dark mt-1">Generate</button>
 </form>
 
 {% endblock %}
