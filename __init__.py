@@ -1,4 +1,4 @@
-import dkextract, json
+import dkextract, json, re
 from requests import Session
 from flask import Flask, flash, render_template, request, redirect, session, url_for
 from flask_wtf import FlaskForm
@@ -19,25 +19,36 @@ def create_app(test_config=None):
     else:
         app.config.from_mapping(test_config)
 
-    @app.route('/', methods=['GET'])
-    def index():
-        return render_template('index.html')
-    
+    @app.route('/', methods=['GET', 'POST'])
     @app.route('/generate', methods=['GET', 'POST'])
-    def generate():
+    def generate_form():
         if request.method == 'GET':
             return render_template('generate.html')
         elif request.method == 'POST':
-            if request.form.get('generate'):
-                form = request.form
-                weekly = dkextract.generate_results(s, contest_id=form['contest_id'], week=form['week'], year=form['year'], winning_values=winning_values)
-                return weekly
-            elif request.form.get('get_not_submitted'):
-                form = request.form
-                not_submitted = dkextract.get_not_submitted_list(s, contest_id=form['contest_id'], all_members=all_members)
-                return render_template('not_submitted.html', not_submitted=not_submitted)
+            contest_id = request.form['contest_id']
+            valid_id = re.search('^\d{8,}$', contest_id)
+            id_from_url = re.search('(draftkings\.com.*contest.*)(\d{8,})', contest_id, re.IGNORECASE)
+            
+            if id_from_url:
+                contest_id = id_from_url.group(2)
+            elif valid_id:
+                contest_id = contest_id
+            else:
+                flash('Please provide a valid contest ID or URL.', category='danger')
+                return redirect(url_for('generate_form'))
 
-    @app.route('/not_submitted/<contest_id>', methods=['GET', 'POST'])
+            if request.form.get('generate'):
+                return redirect(url_for('generate', contest_id=contest_id))
+            elif request.form.get('generate', ):
+                return redirect(url_for('not_submitted', contest_id=contest_id))
+
+    @app.route('/generate/<contest_id>', methods=['GET'])
+    def generate(contest_id):
+        if request.method == 'GET':
+            weekly = dkextract.generate_results(s, contest_id=contest_id, winning_values=winning_values)
+            return weekly
+
+    @app.route('/not_submitted/<contest_id>', methods=['GET'])
     def not_submitted(contest_id):
         if request.method == 'GET':
             not_submitted = dkextract.get_not_submitted_list(s, contest_id=contest_id, all_members=all_members)
