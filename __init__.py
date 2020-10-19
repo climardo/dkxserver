@@ -3,6 +3,7 @@ from requests import Session
 from flask import Flask, flash, render_template, request, redirect, session, url_for
 from flask_wtf import FlaskForm
 from os import environ
+from .validate import valid_contest_id
 
 def create_app(test_config=None):
     app = Flask(__name__, instance_relative_config=True)
@@ -26,21 +27,17 @@ def create_app(test_config=None):
             return render_template('generate.html')
         elif request.method == 'POST':
             contest_id = request.form['contest_id']
-            valid_id = re.search('^\d{8,}$', contest_id)
-            id_from_url = re.search('(draftkings\.com.*contest.*)(\d{8,})', contest_id, re.IGNORECASE)
-            
-            if id_from_url:
-                contest_id = id_from_url.group(2)
-            elif valid_id:
-                contest_id = contest_id
+        
+            if valid_contest_id(contest_id):
+                contest_id = valid_contest_id(contest_id)
+                if request.form.get('generate'):
+                    return redirect(url_for('generate', contest_id=contest_id))
+                elif request.form.get('get_not_submitted'):
+                    flash('Success! Members who did not submit a lineup are listed below.', category="success")
+                    return redirect(url_for('not_submitted', contest_id=contest_id))
             else:
                 flash('Please provide a valid contest ID or URL.', category='danger')
                 return redirect(url_for('generate_form'))
-
-            if request.form.get('generate'):
-                return redirect(url_for('generate', contest_id=contest_id))
-            elif request.form.get('generate', ):
-                return redirect(url_for('not_submitted', contest_id=contest_id))
 
     @app.route('/generate/<contest_id>', methods=['GET'])
     def generate(contest_id):
