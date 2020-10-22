@@ -1,4 +1,4 @@
-import dkextract, json, re
+import dkextract, json, re, yaml
 from requests import Session
 from flask import Flask, flash, render_template, request, redirect, session, url_for
 from flask_wtf import FlaskForm
@@ -14,6 +14,10 @@ def create_app(test_config=None):
     all_members = set(["arianna29", "climardo", "DarbyDiaz3", "Dash7", "ejmesa", "frank.corn", "glopez28", "Halvworld", "hlimardo", "JekellP", "jlopez0809", "LoLoGREEN", "olivadotij", "pshhidk", "rogdiaz", "XplicitK", "g_mendoza"])
     winning_values = {1: 30, 2: 15, 3: 8}
     s = Session()
+    
+    navlinks = s.get('https://raw.githubusercontent.com/climardo/platanofb/gh-pages/_data/navlinks.yaml').content
+    all_links = yaml.safe_load(navlinks)
+    curr_link = all_links[0]['link']
 
     if test_config is None:
         app.config.from_pyfile('config.py', silent=True)
@@ -24,7 +28,7 @@ def create_app(test_config=None):
     @app.route('/generate', methods=['GET', 'POST'])
     def generate_form():
         if request.method == 'GET':
-            return render_template('generate.html')
+            return render_template('generate.html', curr_link=curr_link)
         elif request.method == 'POST':
             contest_id = request.form['contest_id']
         
