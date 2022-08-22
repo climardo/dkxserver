@@ -13,6 +13,3 @@ flask-wtf = "*"
 python-dotenv = "*"
 dkextract = "*"
 pyyaml = "*"
-
-[requires]
-python_version = "3.7"

@@ -11,8 +11,8 @@ def create_app(test_config=None):
         SECRET_KEY=environ.get('SECRET_KEY'),
     )
 
-    all_members = set(["arianna29", "climardo", "DarbyDiaz3", "Dash7", "ejmesa", "frank.corn", "glopez28", "geedee3", "Halvworld", "hlimardo", "JekellP", "jlopez0809", "LoLoGREEN", "olivadotij", "pshhidk", "rogdiaz", "XplicitK", "g_mendoza"])
-    winning_values = {1: 30, 2: 15, 3: 8}
+    all_members = set(["arianna29", "BrunoDiaz", "C-Bail", "climardo", "DarbyDiaz3", "Dash7", "ejmesa", "frank.corn", "g_mendoza", "geedee3", "glopez28", "Halvworld", "hlimardo", "JekellP", "jlopez0809", "LoLoGREEN", "olivadotij", "pshhidk", "rogdiaz"])
+    winning_values = {1: 33, 2: 15, 3: 8}
     s = Session()
     
     navlinks = s.get('https://raw.githubusercontent.com/climardo/platanofb/gh-pages/_data/navlinks.yaml').content
