@@ -11,7 +11,7 @@ def create_app(test_config=None):
         SECRET_KEY=environ.get('SECRET_KEY'),
     )
 
-    all_members = set(["arianna29", "BrunoDiaz", "C-Bail", "climardo", "DarbyDiaz3", "Dash7", "ejmesa", "frank.corn", "g_mendoza", "geedee3", "glopez28", "Halvworld", "hlimardo", "JekellP", "jlopez0809", "LoLoGREEN", "MattyDel14", "olivadotij", "pshhidk", "rogdiaz"])
+    all_members = set(["arianna29", "BrunoDiaz", "climardo", "DarbyDiaz3", "Dash7", "ejmesa", "frank.corn", "g_mendoza", "geedee3", "glopez28", "Halvworld", "hlimardo", "JekellP", "jlopez0809", "LoLoGREEN", "MattyDel14", "olivadotij", "pshhidk", "rogdiaz"])
     winning_values = {1: 33, 2: 15, 3: 8}
     s = Session()
     
