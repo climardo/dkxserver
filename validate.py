@@ -1,5 +1,5 @@
 import re
-from flask import flash, redirect, url_for
+from requests import Session
 
 def valid_contest_id(contest_id):
     valid_id = re.search('^\d{9,}$', contest_id)
@@ -14,3 +14,11 @@ def valid_contest_id(contest_id):
 
     return contest_id
     
+def get_missing_lineup(contest_id, all_members):
+    missing_lineup = []
+    s = Session()
+    contest_details = s.get(f'https://www.draftkings.com/contest/detailspop?contestId={contest_id}')
+    for member in all_members:
+        if member not in contest_details.text:
+            missing_lineup.append(member)
+    return missing_lineup

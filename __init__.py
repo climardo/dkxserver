@@ -3,16 +3,41 @@ from requests import Session
 from flask import Flask, flash, render_template, request, redirect, session, url_for
 from flask_wtf import FlaskForm
 from os import environ
-from .validate import valid_contest_id
+from .validate import valid_contest_id, get_missing_lineup
 
 def create_app(test_config=None):
     app = Flask(__name__, instance_relative_config=True)
     app.config.from_mapping(
         SECRET_KEY=environ.get('SECRET_KEY'),
     )
-
-    all_members = set(["arianna29", "BrunoDiaz", "climardo", "DarbyDiaz3", "Dash7", "ejmesa", "frank.corn", "g_mendoza", "geedee3", "glopez28", "hlimardo", "JekellP", "jlopez0809", "LoLoGREEN", "luisdello", "MattyDel14", "olivadotij", "pshhidk", "rogdiaz"])
-    winning_values = {1: 33, 2: 15, 3: 8}
+    all_members = set(
+        [
+            "AmesSB",
+            "arianna29",
+            "BrunoDiaz",
+            "climardo",
+            "DarbyDiaz3",
+            "Dash7",
+            "ejmesa",
+            "frank.corn",
+            "g_mendoza",
+            "geedee3",
+            "glopez28",
+            "Halvworld",
+            "hlimardo",
+            "ismeyo",
+            "JekellP",
+            "jlopez0809",
+            "LoLoGREEN",
+            "luisdello",
+            "MattyDel14",
+            "olivadotij",
+            "pshhidk",
+            "rahianr",
+            "rogdiaz"
+        ]
+    )
+    winning_values = {1: 41, 2: 16, 3: 9}
     s = Session()
     
     navlinks = s.get('https://raw.githubusercontent.com/climardo/platanofb/gh-pages/_data/navlinks.yaml').content
@@ -52,7 +77,7 @@ def create_app(test_config=None):
     @app.route('/not_submitted/<contest_id>', methods=['GET'])
     def not_submitted(contest_id):
         if request.method == 'GET':
-            not_submitted = dkextract.get_not_submitted_list(s, contest_id=contest_id, all_members=all_members)
+            not_submitted = get_missing_lineup(contest_id=contest_id, all_members=all_members)
             return render_template('not_submitted.html', not_submitted=not_submitted)
 
     return app
