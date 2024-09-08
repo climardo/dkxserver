@@ -5,15 +5,13 @@ from flask_wtf import FlaskForm
 from os import environ
 from .validate import valid_contest_id, get_missing_lineup
 
-def create_app(test_config=None):
-    app = Flask(__name__, instance_relative_config=True)
-    app.config.from_mapping(
-        SECRET_KEY=environ.get('SECRET_KEY'),
-    )
+def create_app():
+    app = Flask(__name__)
+    # app = Flask(__name__, instance_relative_config=True)
+    app.config.from_pyfile('settings.py')
     all_members = set(
         [
             "AmesSB",
-            "arianna29",
             "BrunoDiaz",
             "climardo",
             "DarbyDiaz3",
@@ -23,18 +21,15 @@ def create_app(test_config=None):
             "g_mendoza",
             "geedee3",
             "glopez28",
-            "Halvworld",
             "hlimardo",
             "ismeyo",
             "JekellP",
-            "jlopez0809",
             "LoLoGREEN",
             "luisdello",
             "MattyDel14",
             "olivadotij",
             "pshhidk",
-            "rahianr",
-            "rogdiaz"
+            "rahianr"
         ]
     )
     winning_values = {1: 41, 2: 16, 3: 9}
@@ -43,11 +38,6 @@ def create_app(test_config=None):
     navlinks = s.get('https://raw.githubusercontent.com/climardo/platanofb/gh-pages/_data/navlinks.yaml').content
     all_links = yaml.safe_load(navlinks)
     curr_link = all_links[0]['link']
-
-    if test_config is None:
-        app.config.from_pyfile('config.py', silent=True)
-    else:
-        app.config.from_mapping(test_config)
 
     @app.route('/', methods=['GET', 'POST'])
     @app.route('/generate', methods=['GET', 'POST'])
